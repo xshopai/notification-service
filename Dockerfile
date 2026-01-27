@@ -38,11 +38,11 @@ RUN mkdir -p logs && chown -R notificationuser:nodejs logs
 USER notificationuser
 
 # Expose port
-EXPOSE 3003
+EXPOSE ${PORT:-8011}
 
 # Health check (using Node.js to avoid curl dependency)
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
-    CMD node -e "require('http').get('http://localhost:3003/health', (r) => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"
+    CMD node -e "require('http').get('http://localhost:' + (process.env.PORT || '8011') + '/health', (r) => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"
 
 # Use dumb-init and start development server
 ENTRYPOINT ["dumb-init", "--"]
@@ -83,11 +83,11 @@ RUN mkdir -p logs && chown -R notificationuser:nodejs logs
 USER notificationuser
 
 # Expose port
-EXPOSE 3003
+EXPOSE ${PORT:-8011}
 
 # Health check (using Node.js to avoid curl dependency)
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD node -e "require('http').get('http://localhost:3003/health', (r) => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"
+    CMD node -e "require('http').get('http://localhost:' + (process.env.PORT || '8011') + '/health', (r) => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"
 
 # Use dumb-init to handle signals properly
 ENTRYPOINT ["dumb-init", "--"]
