@@ -70,8 +70,9 @@ else
             "SENDGRID_API_KEY=secretref:sendgrid-key" \
             "TWILIO_ACCOUNT_SID=secretref:twilio-sid" \
             "TWILIO_AUTH_TOKEN=secretref:twilio-token" \
-            "DAPR_HTTP_PORT=3511" \
-            "PUBSUB_NAME=xshopai-pubsub" \
+            "DAPR_HTTP_PORT=3500" \
+            "DAPR_GRPC_PORT=50001" \
+            "DAPR_PUBSUB_NAME=pubsub" \
         --output none
 fi
 

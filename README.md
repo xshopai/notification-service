@@ -14,6 +14,7 @@ Stateless notification microservice for xshopai - consumes events from message b
 ### Setup
 
 **1. Clone & Install**
+
 ```bash
 git clone https://github.com/xshopai/notification-service.git
 cd notification-service
@@ -21,6 +22,7 @@ npm install
 ```
 
 **2. Configure Environment**
+
 ```bash
 # Copy environment template
 cp .env.example .env
@@ -33,6 +35,7 @@ cp .env.example .env
 ```
 
 **3. Run Service**
+
 ```bash
 # Start with Dapr (recommended)
 npm run dev
@@ -43,6 +46,7 @@ npm run dev
 ```
 
 **4. Verify**
+
 ```bash
 # Check health
 curl http://localhost:1006/health
@@ -71,11 +75,11 @@ npm start
 
 ## 📚 Documentation
 
-| Document | Description |
-|----------|-------------|
+| Document                                      | Description                             |
+| --------------------------------------------- | --------------------------------------- |
 | [📖 Developer Guide](docs/DEVELOPER_GUIDE.md) | Local setup, debugging, daily workflows |
-| [📘 Technical Reference](docs/TECHNICAL.md) | Architecture, security, monitoring |
-| [🤝 Contributing](docs/CONTRIBUTING.md) | Contribution guidelines and workflow |
+| [📘 Technical Reference](docs/TECHNICAL.md)   | Architecture, security, monitoring      |
+| [🤝 Contributing](docs/CONTRIBUTING.md)       | Contribution guidelines and workflow    |
 
 ## ⚙️ Configuration
 
@@ -108,8 +112,8 @@ EMAIL_FROM_ADDRESS=noreply@xshopai.com
 EMAIL_ENABLED=true
 
 # Dapr
-DAPR_HTTP_PORT=3506              # Dapr sidecar HTTP port
-DAPR_GRPC_PORT=50006             # Dapr sidecar gRPC port
+DAPR_HTTP_PORT=3500              # Dapr sidecar HTTP port
+DAPR_GRPC_PORT=50001             # Dapr sidecar gRPC port
 ```
 
 See [.env.example](.env.example) for complete configuration options.
@@ -127,6 +131,7 @@ See [.env.example](.env.example) for complete configuration options.
 ## 🏗️ Architecture
 
 **Simple Consumer Pattern:**
+
 ```
 Message Broker → Notification Service → Email/SMS/Push
                          ↓
@@ -134,6 +139,7 @@ Message Broker → Notification Service → Email/SMS/Push
 ```
 
 **Key Principles:**
+
 - **Stateless**: No database, no state management
 - **Event-Driven**: Consumes events, sends notifications, publishes outcomes
 - **Simple**: Just a consumer - no API layer needed

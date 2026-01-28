@@ -123,11 +123,11 @@ const config: Config = {
   },
 
   dapr: {
-    httpPort: parseInt(process.env.DAPR_HTTP_PORT || '3503', 10),
-    grpcPort: parseInt(process.env.DAPR_GRPC_PORT || '50003', 10),
+    httpPort: parseInt(process.env.DAPR_HTTP_PORT || '3500', 10),
+    grpcPort: parseInt(process.env.DAPR_GRPC_PORT || '50001', 10),
     appPort: parseInt(process.env.PORT || '3003', 10),
     host: process.env.DAPR_HOST || 'localhost',
-    pubsubName: process.env.DAPR_PUBSUB_NAME || 'notification-pubsub',
+    pubsubName: 'pubsub',
     appId: process.env.DAPR_APP_ID || 'notification-service',
   },
 

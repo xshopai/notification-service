@@ -6,7 +6,7 @@ spec:
   topic: auth.user.registered
   routes:
     default: /events/auth.user.registered
-  pubsubname: event-bus
+  pubsubname: pubsub
   deadLetterTopic: auth.user.registered.deadletter
 scopes:
   - notification-service
@@ -19,7 +19,7 @@ spec:
   topic: auth.email.verification.requested
   routes:
     default: /events/auth.email.verification.requested
-  pubsubname: event-bus
+  pubsubname: pubsub
   deadLetterTopic: auth.email.verification.requested.deadletter
 scopes:
   - notification-service
@@ -32,7 +32,7 @@ spec:
   topic: auth.password.reset.requested
   routes:
     default: /events/auth.password.reset.requested
-  pubsubname: event-bus
+  pubsubname: pubsub
   deadLetterTopic: auth.password.reset.requested.deadletter
 scopes:
   - notification-service
@@ -45,7 +45,7 @@ spec:
   topic: auth.password.reset.completed
   routes:
     default: /events/auth.password.reset.completed
-  pubsubname: event-bus
+  pubsubname: pubsub
   deadLetterTopic: auth.password.reset.completed.deadletter
 scopes:
   - notification-service
@@ -58,7 +58,7 @@ spec:
   topic: user.user.created
   routes:
     default: /events/user.user.created
-  pubsubname: event-bus
+  pubsubname: pubsub
   deadLetterTopic: user.user.created.deadletter
 scopes:
   - notification-service
@@ -71,7 +71,7 @@ spec:
   topic: user.user.updated
   routes:
     default: /events/user.user.updated
-  pubsubname: event-bus
+  pubsubname: pubsub
   deadLetterTopic: user.user.updated.deadletter
 scopes:
   - notification-service
@@ -84,7 +84,7 @@ spec:
   topic: user.user.deleted
   routes:
     default: /events/user.user.deleted
-  pubsubname: event-bus
+  pubsubname: pubsub
   deadLetterTopic: user.user.deleted.deadletter
 scopes:
   - notification-service
@@ -97,7 +97,7 @@ spec:
   topic: user.email.verified
   routes:
     default: /events/user.email.verified
-  pubsubname: event-bus
+  pubsubname: pubsub
   deadLetterTopic: user.email.verified.deadletter
 scopes:
   - notification-service
@@ -110,7 +110,7 @@ spec:
   topic: user.password.changed
   routes:
     default: /events/user.password.changed
-  pubsubname: event-bus
+  pubsubname: pubsub
   deadLetterTopic: user.password.changed.deadletter
 scopes:
   - notification-service
@@ -123,7 +123,7 @@ spec:
   topic: order.placed
   routes:
     default: /events/order.placed
-  pubsubname: event-bus
+  pubsubname: pubsub
   deadLetterTopic: order.placed.deadletter
 scopes:
   - notification-service
@@ -136,7 +136,7 @@ spec:
   topic: order.cancelled
   routes:
     default: /events/order.cancelled
-  pubsubname: event-bus
+  pubsubname: pubsub
   deadLetterTopic: order.cancelled.deadletter
 scopes:
   - notification-service
@@ -149,7 +149,7 @@ spec:
   topic: order.delivered
   routes:
     default: /events/order.delivered
-  pubsubname: event-bus
+  pubsubname: pubsub
   deadLetterTopic: order.delivered.deadletter
 scopes:
   - notification-service
@@ -162,7 +162,7 @@ spec:
   topic: payment.received
   routes:
     default: /events/payment.received
-  pubsubname: event-bus
+  pubsubname: pubsub
   deadLetterTopic: payment.received.deadletter
 scopes:
   - notification-service
@@ -175,7 +175,7 @@ spec:
   topic: payment.failed
   routes:
     default: /events/payment.failed
-  pubsubname: event-bus
+  pubsubname: pubsub
   deadLetterTopic: payment.failed.deadletter
 scopes:
   - notification-service
@@ -188,7 +188,7 @@ spec:
   topic: profile.password_changed
   routes:
     default: /events/profile.password_changed
-  pubsubname: event-bus
+  pubsubname: pubsub
   deadLetterTopic: profile.password_changed.deadletter
 scopes:
   - notification-service
@@ -201,7 +201,7 @@ spec:
   topic: profile.notification_preferences_updated
   routes:
     default: /events/profile.notification_preferences_updated
-  pubsubname: event-bus
+  pubsubname: pubsub
   deadLetterTopic: profile.notification_preferences_updated.deadletter
 scopes:
   - notification-service
@@ -214,7 +214,7 @@ spec:
   topic: profile.bank_details_updated
   routes:
     default: /events/profile.bank_details_updated
-  pubsubname: event-bus
+  pubsubname: pubsub
   deadLetterTopic: profile.bank_details_updated.deadletter
 scopes:
   - notification-service
