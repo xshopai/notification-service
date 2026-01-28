@@ -5,9 +5,9 @@
   "type": "module",
   "main": "dist/src/server.js",
   "scripts": {
-    "start": "dapr run --app-id notification-service --app-port 1011 --dapr-http-port 3511 --dapr-grpc-port 50011 --log-level warn --config ./.dapr/config.yaml --resources-path ./.dapr/components -- node dist/src/server.js",
+    "start": "dapr run --app-id notification-service --app-port 1011 --dapr-http-port 3500 --dapr-grpc-port 50001 --log-level warn --config ./.dapr/config.yaml --resources-path ./.dapr/components -- node dist/src/server.js",
     "dev": "npx tsx watch src/server.ts",
-    "debug": "dapr run --app-id notification-service --app-port 1011 --dapr-http-port 3511 --dapr-grpc-port 50011 --log-level warn --config ./.dapr/config.yaml --resources-path ./.dapr/components -- npx tsx --inspect=9229 src/server.ts",
+    "debug": "dapr run --app-id notification-service --app-port 1011 --dapr-http-port 3500 --dapr-grpc-port 50001 --log-level warn --config ./.dapr/config.yaml --resources-path ./.dapr/components -- npx tsx --inspect=9229 src/server.ts",
     "build": "tsc",
     "test": "jest",
     "test:unit": "jest tests/unit",
