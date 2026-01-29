@@ -1,44 +1,35 @@
 /**
- * Dapr Event Publisher for Notification Service
- * Publishes notification outcome events via Dapr pub/sub
+ * Event Publisher for Notification Service
+ * Publishes notification outcome events via configurable messaging provider
+ *
+ * Uses MESSAGING_PROVIDER environment variable:
+ * - 'dapr' (default) - Uses Dapr pub/sub
+ * - 'rabbitmq' - Direct RabbitMQ connection
+ * - 'servicebus' - Azure Service Bus
  */
 
-import { daprClient } from '../../clients/index.js';
+import { getMessagingProvider } from '../../messaging/index.js';
 import logger from '../../core/logger.js';
 import config from '../../core/config.js';
 import { EventTypes } from '../event-types.js';
 
 export class DaprEventPublisher {
-  private readonly pubsubName: string;
   private readonly serviceName: string;
 
   constructor() {
-    this.pubsubName = config.dapr.pubsubName;
     this.serviceName = config.service.name;
   }
 
   /**
-   * Publish event to Dapr pub/sub
+   * Publish event via configured messaging provider
    */
   async publishEvent(
     eventType: EventTypes.NOTIFICATION_SENT | EventTypes.NOTIFICATION_FAILED,
     data: any,
     traceId: string,
-    spanId?: string
+    spanId?: string,
   ): Promise<boolean> {
     try {
-      const event = {
-        specversion: '1.0',
-        type: eventType,
-        source: this.serviceName,
-        id: data.data?.notificationId || traceId,
-        time: new Date().toISOString(),
-        datacontenttype: 'application/json',
-        data: data,
-        // W3C Trace Context
-        traceparent: spanId ? `00-${traceId}-${spanId}-01` : `00-${traceId}-${'0'.repeat(16)}-01`,
-      };
-
       const contextLogger = logger.withTraceContext(traceId, spanId);
 
       contextLogger.info(`Publishing event: ${eventType}`, {
@@ -47,15 +38,24 @@ export class DaprEventPublisher {
         notificationId: data.data?.notificationId,
       });
 
-      await daprClient.publishEvent(this.pubsubName, eventType, event);
+      // Build event data with trace context
+      const eventData = {
+        ...data,
+        traceparent: spanId ? `00-${traceId}-${spanId}-01` : `00-${traceId}-${'0'.repeat(16)}-01`,
+      };
 
-      contextLogger.info(`Event published successfully: ${eventType}`, {
-        operation: 'publish_event',
-        eventType,
-        businessEvent: 'EVENT_PUBLISHED',
-      });
+      const provider = getMessagingProvider();
+      const success = await provider.publishEvent(eventType, eventData, traceId);
 
-      return true;
+      if (success) {
+        contextLogger.info(`Event published successfully: ${eventType}`, {
+          operation: 'publish_event',
+          eventType,
+          businessEvent: 'EVENT_PUBLISHED',
+        });
+      }
+
+      return success;
     } catch (error) {
       const contextLogger = logger.withTraceContext(traceId, spanId);
       contextLogger.error(`Failed to publish event: ${eventType}`, {
@@ -77,7 +77,7 @@ export class DaprEventPublisher {
     recipientEmail: string,
     subject: string,
     traceId: string,
-    spanId?: string
+    spanId?: string,
   ): Promise<boolean> {
     return this.publishEvent(
       EventTypes.NOTIFICATION_SENT,
@@ -96,7 +96,7 @@ export class DaprEventPublisher {
         },
       },
       traceId,
-      spanId
+      spanId,
     );
   }
 
@@ -111,7 +111,7 @@ export class DaprEventPublisher {
     subject: string,
     errorMessage: string,
     traceId: string,
-    spanId?: string
+    spanId?: string,
   ): Promise<boolean> {
     return this.publishEvent(
       EventTypes.NOTIFICATION_FAILED,
@@ -131,7 +131,7 @@ export class DaprEventPublisher {
         },
       },
       traceId,
-      spanId
+      spanId,
     );
   }
 }
