@@ -267,13 +267,6 @@ echo -e "   SendGrid (Email):  $([ -n "$SENDGRID_API_KEY" ] && echo "Configured"
 echo -e "   Twilio (SMS):      $([ -n "$TWILIO_ACCOUNT_SID" ] && echo "Configured" || echo "Mock mode")"
 echo ""
 
-read -p "Do you want to proceed with deployment? (Y/n): " CONFIRM
-CONFIRM=${CONFIRM:-Y}
-if [[ "$CONFIRM" =~ ^[Nn]$ ]]; then
-    print_warning "Deployment cancelled by user"
-    exit 0
-fi
-
 # ============================================================================
 # Step 1: Build and Push Container Image
 # ============================================================================
