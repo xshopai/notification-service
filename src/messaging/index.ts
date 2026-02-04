@@ -16,7 +16,8 @@
  */
 
 // Types and interfaces
-export { MessagingProvider, MessagingProviderType, CloudEvent, buildCloudEvent } from './provider.js';
+export type { MessagingProvider, MessagingProviderType, CloudEvent } from './provider.js';
+export { buildCloudEvent } from './provider.js';
 
 // Provider implementations (for direct instantiation if needed)
 export { DaprMessagingProvider } from './daprProvider.js';

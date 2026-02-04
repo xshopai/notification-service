@@ -1,22 +1,20 @@
-#!/usr/bin/env bash
-# Run Notification Service with Dapr sidecar
-# Usage: ./run.sh
+#!/bin/bash
 
-echo -e "\033[0;32mStarting Notification Service with Dapr...\033[0m"
-echo -e "\033[0;36mService will be available at: http://localhost:8011\033[0m"
-echo -e "\033[0;36mDapr HTTP endpoint: http://localhost:3500\033[0m"
-echo -e "\033[0;36mDapr gRPC endpoint: localhost:50001\033[0m"
+# Notification Service - Run with Dapr
+
+echo "Starting Notification Service with Dapr..."
+echo "Service will be available at: http://localhost:8011"
+echo "Dapr HTTP endpoint: http://localhost:3511"
+echo "Dapr gRPC endpoint: localhost:50011"
 echo ""
-
-# Get the script directory
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 dapr run \
   --app-id notification-service \
   --app-port 8011 \
-  --dapr-http-port 3500 \
-  --dapr-grpc-port 50001 \
-  --resources-path "$SCRIPT_DIR/.dapr/components" \
-  --config "$SCRIPT_DIR/.dapr/config.yaml" \
-  --log-level warn \
-  -- npx tsx watch src/server.ts
+  --dapr-http-port 3511 \
+  --dapr-grpc-port 50011 \
+  --log-level info \
+  --config ./.dapr/config.yaml \
+  --resources-path ./.dapr/components \
+  -- npm run dev
+
