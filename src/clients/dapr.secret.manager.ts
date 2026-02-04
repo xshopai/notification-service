@@ -85,8 +85,32 @@ class DaprSecretManager {
   }
 
   /**
+   * Get a secret with Dapr first, ENV fallback
+   * @param secretName - Name of the secret
+   * @returns Secret value
+   */
+  async getSecretWithFallback(secretName: string): Promise<string> {
+    // Priority 1: Try Dapr secret store first
+    try {
+      const value = await this.getSecret(secretName);
+      logger.debug(`${secretName} retrieved from Dapr secret store`);
+      return value;
+    } catch (error) {
+      logger.debug(`${secretName} not in Dapr store, trying ENV variable`);
 
-   * Get email configuration from Dapr secrets
+      // Priority 2: Fallback to environment variable (from .env file)
+      const envValue = process.env[secretName];
+      if (envValue) {
+        logger.debug(`${secretName} retrieved from ENV variable`);
+        return envValue;
+      }
+
+      throw new Error(`${secretName} not found in Dapr secret store or ENV variables`);
+    }
+  }
+
+  /**
+   * Get email configuration from Dapr secret store (preferred) or ENV variables (fallback)
    * @returns Email configuration parameters
    */
   async getEmailConfig(): Promise<{
@@ -97,15 +121,15 @@ class DaprSecretManager {
     smtpPass: string;
   }> {
     const [host, port, secure, user, pass] = await Promise.all([
-      this.getSecret('SMTP_HOST'),
-      this.getSecret('SMTP_PORT'),
-      this.getSecret('SMTP_SECURE'),
-      this.getSecret('SMTP_USER'),
-      this.getSecret('SMTP_PASS'),
+      this.getSecretWithFallback('SMTP_HOST'),
+      this.getSecretWithFallback('SMTP_PORT'),
+      this.getSecretWithFallback('SMTP_SECURE'),
+      this.getSecretWithFallback('SMTP_USER'),
+      this.getSecretWithFallback('SMTP_PASS'),
     ]);
 
     if (!host || !port || !user || !pass) {
-      throw new Error('Missing required SMTP secrets from Dapr');
+      throw new Error('Missing required SMTP configuration');
     }
 
     return {
@@ -118,7 +142,7 @@ class DaprSecretManager {
   }
 
   /**
-   * Get message broker configuration from Dapr secrets
+   * Get message broker configuration from Dapr secret store (preferred) or ENV variables (fallback)
    * @returns Message broker configuration parameters
    */
   async getMessageBrokerConfig(): Promise<{
@@ -126,12 +150,12 @@ class DaprSecretManager {
     azureServiceBusConnectionString: string;
   }> {
     const [rabbitmqUrl, azureConnectionString] = await Promise.all([
-      this.getSecret('RABBITMQ_URL'),
-      this.getSecret('AZURE_SERVICEBUS_CONNECTION_STRING'),
+      this.getSecretWithFallback('RABBITMQ_URL'),
+      this.getSecretWithFallback('AZURE_SERVICEBUS_CONNECTION_STRING').catch(() => ''),
     ]);
 
     if (!rabbitmqUrl) {
-      throw new Error('RABBITMQ_URL not found in Dapr secret store');
+      throw new Error('RABBITMQ_URL not found in Dapr secret store or ENV variables');
     }
 
     return {
