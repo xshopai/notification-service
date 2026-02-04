@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+import { EmailClient, KnownEmailSendStatus } from '@azure/communication-email';
 import config from '../core/config.js';
 import logger from '../core/logger.js';
 
@@ -126,17 +127,122 @@ class SMTPEmailProvider implements EmailProvider {
   }
 }
 
+/**
+ * Azure Communication Services Email Provider
+ * Uses ACS SDK for sending emails in production/cloud environments
+ */
+class ACSEmailProvider implements EmailProvider {
+  private client: EmailClient | null = null;
+  private configured: boolean = false;
+  private senderAddress: string;
+
+  constructor() {
+    this.senderAddress = config.email.acs.senderAddress;
+    this.initializeClient();
+  }
+
+  private initializeClient(): void {
+    try {
+      const connectionString = config.email.acs.connectionString;
+
+      if (!connectionString) {
+        logger.warn('⚠️ ACS connection string not configured');
+        this.configured = false;
+        return;
+      }
+
+      if (!this.senderAddress) {
+        logger.warn('⚠️ ACS sender address not configured');
+        this.configured = false;
+        return;
+      }
+
+      this.client = new EmailClient(connectionString);
+      this.configured = true;
+      logger.info('✅ Azure Communication Services email provider initialized');
+      logger.info(`📧 Sender address: ${this.senderAddress}`);
+    } catch (error) {
+      logger.error('❌ Failed to initialize ACS email client:', error);
+      this.configured = false;
+    }
+  }
+
+  async sendEmail(options: EmailOptions): Promise<boolean> {
+    const startTime = Date.now();
+
+    if (!this.configured || !this.client) {
+      logger.error('❌ ACS provider not configured. Cannot send email.');
+      return false;
+    }
+
+    try {
+      const fromAddress = options.from?.address || this.senderAddress;
+      const displayName = options.from?.name || config.email.from.name;
+
+      const message = {
+        senderAddress: fromAddress,
+        content: {
+          subject: options.subject,
+          plainText: options.text,
+          html: options.html,
+        },
+        recipients: {
+          to: [{ address: options.to, displayName: options.to }],
+        },
+      };
+
+      // Send email using ACS (polling for completion)
+      const poller = await this.client.beginSend(message);
+      const result = await poller.pollUntilDone();
+
+      const duration = Date.now() - startTime;
+
+      if (result.status === KnownEmailSendStatus.Succeeded) {
+        logger.info('📧 Email sent successfully via ACS:', {
+          to: options.to,
+          subject: options.subject,
+          messageId: result.id,
+          duration: `${duration}ms`,
+        });
+        return true;
+      } else {
+        logger.error('❌ ACS email send failed:', {
+          to: options.to,
+          subject: options.subject,
+          status: result.status,
+          error: result.error,
+          duration: `${duration}ms`,
+        });
+        return false;
+      }
+    } catch (error) {
+      const duration = Date.now() - startTime;
+
+      logger.error('❌ Failed to send email via ACS:', {
+        to: options.to,
+        subject: options.subject,
+        error: error instanceof Error ? error.message : error,
+        duration: `${duration}ms`,
+      });
+      return false;
+    }
+  }
+
+  isConfigured(): boolean {
+    return this.configured;
+  }
+}
+
 // Factory class to create different email providers
 class EmailServiceFactory {
   static createProvider(providerType: string = 'smtp'): EmailProvider {
     switch (providerType.toLowerCase()) {
       case 'smtp':
         return new SMTPEmailProvider();
-      // Future providers can be added here:
-      // case 'sendgrid':
-      //   return new SendGridEmailProvider();
-      // case 'ses':
-      //   return new SESEmailProvider();
+      case 'acs':
+      case 'azure':
+      case 'azure-communication-services':
+        return new ACSEmailProvider();
       default:
         logger.warn(`⚠️ Unknown email provider: ${providerType}. Falling back to SMTP.`);
         return new SMTPEmailProvider();
@@ -165,7 +271,7 @@ class EmailService {
     subject: string,
     message: string,
     eventType: string,
-    eventData?: any
+    eventData?: any,
   ): Promise<boolean> {
     if (!this.enabled) {
       logger.debug('📧 Email sending skipped (service disabled)');

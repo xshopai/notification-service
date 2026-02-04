@@ -1,220 +1,174 @@
+# Auth Events
 apiVersion: dapr.io/v2alpha1
 kind: Subscription
 metadata:
   name: auth-user-registered-subscription
 spec:
+  pubsubname: pubsub
   topic: auth.user.registered
   routes:
     default: /events/auth.user.registered
-  pubsubname: pubsub
-  deadLetterTopic: auth.user.registered.deadletter
-scopes:
-  - notification-service
 ---
 apiVersion: dapr.io/v2alpha1
 kind: Subscription
 metadata:
   name: auth-email-verification-requested-subscription
 spec:
+  pubsubname: pubsub
   topic: auth.email.verification.requested
   routes:
     default: /events/auth.email.verification.requested
-  pubsubname: pubsub
-  deadLetterTopic: auth.email.verification.requested.deadletter
-scopes:
-  - notification-service
 ---
 apiVersion: dapr.io/v2alpha1
 kind: Subscription
 metadata:
   name: auth-password-reset-requested-subscription
 spec:
+  pubsubname: pubsub
   topic: auth.password.reset.requested
   routes:
     default: /events/auth.password.reset.requested
-  pubsubname: pubsub
-  deadLetterTopic: auth.password.reset.requested.deadletter
-scopes:
-  - notification-service
 ---
 apiVersion: dapr.io/v2alpha1
 kind: Subscription
 metadata:
   name: auth-password-reset-completed-subscription
 spec:
+  pubsubname: pubsub
   topic: auth.password.reset.completed
   routes:
     default: /events/auth.password.reset.completed
-  pubsubname: pubsub
-  deadLetterTopic: auth.password.reset.completed.deadletter
-scopes:
-  - notification-service
 ---
+# User Events
 apiVersion: dapr.io/v2alpha1
 kind: Subscription
 metadata:
   name: user-created-subscription
 spec:
+  pubsubname: pubsub
   topic: user.user.created
   routes:
     default: /events/user.user.created
-  pubsubname: pubsub
-  deadLetterTopic: user.user.created.deadletter
-scopes:
-  - notification-service
 ---
 apiVersion: dapr.io/v2alpha1
 kind: Subscription
 metadata:
   name: user-updated-subscription
 spec:
+  pubsubname: pubsub
   topic: user.user.updated
   routes:
     default: /events/user.user.updated
-  pubsubname: pubsub
-  deadLetterTopic: user.user.updated.deadletter
-scopes:
-  - notification-service
 ---
 apiVersion: dapr.io/v2alpha1
 kind: Subscription
 metadata:
   name: user-deleted-subscription
 spec:
+  pubsubname: pubsub
   topic: user.user.deleted
   routes:
     default: /events/user.user.deleted
-  pubsubname: pubsub
-  deadLetterTopic: user.user.deleted.deadletter
-scopes:
-  - notification-service
 ---
 apiVersion: dapr.io/v2alpha1
 kind: Subscription
 metadata:
   name: user-email-verified-subscription
 spec:
+  pubsubname: pubsub
   topic: user.email.verified
   routes:
     default: /events/user.email.verified
-  pubsubname: pubsub
-  deadLetterTopic: user.email.verified.deadletter
-scopes:
-  - notification-service
 ---
 apiVersion: dapr.io/v2alpha1
 kind: Subscription
 metadata:
   name: user-password-changed-subscription
 spec:
+  pubsubname: pubsub
   topic: user.password.changed
   routes:
     default: /events/user.password.changed
-  pubsubname: pubsub
-  deadLetterTopic: user.password.changed.deadletter
-scopes:
-  - notification-service
 ---
+# Order Events
 apiVersion: dapr.io/v2alpha1
 kind: Subscription
 metadata:
   name: order-placed-subscription
 spec:
+  pubsubname: pubsub
   topic: order.placed
   routes:
     default: /events/order.placed
-  pubsubname: pubsub
-  deadLetterTopic: order.placed.deadletter
-scopes:
-  - notification-service
 ---
 apiVersion: dapr.io/v2alpha1
 kind: Subscription
 metadata:
   name: order-cancelled-subscription
 spec:
+  pubsubname: pubsub
   topic: order.cancelled
   routes:
     default: /events/order.cancelled
-  pubsubname: pubsub
-  deadLetterTopic: order.cancelled.deadletter
-scopes:
-  - notification-service
 ---
 apiVersion: dapr.io/v2alpha1
 kind: Subscription
 metadata:
   name: order-delivered-subscription
 spec:
+  pubsubname: pubsub
   topic: order.delivered
   routes:
     default: /events/order.delivered
-  pubsubname: pubsub
-  deadLetterTopic: order.delivered.deadletter
-scopes:
-  - notification-service
 ---
+# Payment Events
 apiVersion: dapr.io/v2alpha1
 kind: Subscription
 metadata:
   name: payment-received-subscription
 spec:
+  pubsubname: pubsub
   topic: payment.received
   routes:
     default: /events/payment.received
-  pubsubname: pubsub
-  deadLetterTopic: payment.received.deadletter
-scopes:
-  - notification-service
 ---
 apiVersion: dapr.io/v2alpha1
 kind: Subscription
 metadata:
   name: payment-failed-subscription
 spec:
+  pubsubname: pubsub
   topic: payment.failed
   routes:
     default: /events/payment.failed
-  pubsubname: pubsub
-  deadLetterTopic: payment.failed.deadletter
-scopes:
-  - notification-service
 ---
+# Profile Events
 apiVersion: dapr.io/v2alpha1
 kind: Subscription
 metadata:
   name: profile-password-changed-subscription
 spec:
+  pubsubname: pubsub
   topic: profile.password_changed
   routes:
     default: /events/profile.password_changed
-  pubsubname: pubsub
-  deadLetterTopic: profile.password_changed.deadletter
-scopes:
-  - notification-service
 ---
 apiVersion: dapr.io/v2alpha1
 kind: Subscription
 metadata:
   name: profile-notification-preferences-updated-subscription
 spec:
+  pubsubname: pubsub
   topic: profile.notification_preferences_updated
   routes:
     default: /events/profile.notification_preferences_updated
-  pubsubname: pubsub
-  deadLetterTopic: profile.notification_preferences_updated.deadletter
-scopes:
-  - notification-service
 ---
 apiVersion: dapr.io/v2alpha1
 kind: Subscription
 metadata:
   name: profile-bank-details-updated-subscription
 spec:
+  pubsubname: pubsub
   topic: profile.bank_details_updated
   routes:
     default: /events/profile.bank_details_updated
-  pubsubname: pubsub
-  deadLetterTopic: profile.bank_details_updated.deadletter
-scopes:
-  - notification-service

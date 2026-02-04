@@ -10,6 +10,7 @@ import { traceContextMiddleware } from './middlewares/traceContext.middleware.js
 import homeRoutes from './routes/home.routes.js';
 import operationalRoutes from './routes/operational.routes.js';
 import eventsRoutes from './routes/events.routes.js';
+import daprRoutes from './routes/dapr.routes.js';
 
 const app = express();
 let isShuttingDown = false;
@@ -19,6 +20,7 @@ app.use(express.json());
 app.use(traceContextMiddleware as express.RequestHandler); // W3C Trace Context
 
 // Register routes
+app.use(daprRoutes); // Dapr subscription endpoints (must be first for ACA)
 app.use(homeRoutes); // Home and version info
 app.use(operationalRoutes); // Health, readiness, liveness, metrics
 app.use(eventsRoutes); // Event handling routes

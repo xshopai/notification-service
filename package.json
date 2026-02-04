@@ -5,9 +5,12 @@
   "type": "module",
   "main": "dist/src/server.js",
   "scripts": {
-    "start": "dapr run --app-id notification-service --app-port 1011 --dapr-http-port 3500 --dapr-grpc-port 50001 --log-level warn --config ./.dapr/config.yaml --resources-path ./.dapr/components -- node dist/src/server.js",
+    "start": "node dist/src/server.js",
     "dev": "npx tsx watch src/server.ts",
-    "debug": "dapr run --app-id notification-service --app-port 1011 --dapr-http-port 3500 --dapr-grpc-port 50001 --log-level warn --config ./.dapr/config.yaml --resources-path ./.dapr/components -- npx tsx --inspect=9229 src/server.ts",
+    "debug": "npx tsx --inspect=9229 src/server.ts",
+    "start:dapr": "dapr run --app-id notification-service --app-port 8011 --dapr-http-port 3500 --dapr-grpc-port 50001 --log-level warn --resources-path ./.dapr/components -- node dist/src/server.js",
+    "dev:dapr": "dapr run --app-id notification-service --app-port 8011 --dapr-http-port 3500 --dapr-grpc-port 50001 --log-level warn --resources-path ./.dapr/components -- npx tsx watch src/server.ts",
+    "debug:dapr": "dapr run --app-id notification-service --app-port 8011 --dapr-http-port 3500 --dapr-grpc-port 50001 --log-level warn --resources-path ./.dapr/components -- npx tsx --inspect=9229 src/server.ts",
     "build": "tsc",
     "test": "jest",
     "test:unit": "jest tests/unit",
@@ -28,6 +31,7 @@
   "author": "xshopai Team",
   "license": "MIT",
   "dependencies": {
+    "@azure/communication-email": "^1.0.0",
     "@dapr/dapr": "^3.6.1",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",

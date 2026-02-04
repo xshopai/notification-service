@@ -36,7 +36,7 @@ class NotificationService {
    */
   async renderNotification(
     eventData: NotificationEvent,
-    channel: 'email' | 'sms' | 'push' | 'webhook' = 'email'
+    channel: 'email' | 'sms' | 'push' | 'webhook' = 'email',
   ): Promise<RenderedNotification> {
     const startTime = Date.now();
 
@@ -81,7 +81,7 @@ class NotificationService {
    */
   private createBasicNotification(
     eventData: NotificationEvent,
-    channel: 'email' | 'sms' | 'push' | 'webhook'
+    channel: 'email' | 'sms' | 'push' | 'webhook',
   ): RenderedNotification {
     const eventTypeFormatted = eventData.eventType
       .split('.')
@@ -141,9 +141,28 @@ class NotificationService {
     const traceId = traceparent ? traceparent.split('-')[1] : cloudEvent.id || uuidv4();
     const spanId = traceparent ? traceparent.split('-')[2] : undefined;
     const notificationId = uuidv4();
-    const eventData = cloudEvent.data || cloudEvent;
+
+    // Extract event data - handle double nesting from auth-service event format
+    // Auth-service wraps: { eventId, eventType, source, data: { userId, email, ... }, metadata }
+    // Dapr delivers this as cloudEvent.data, so actual payload is in cloudEvent.data.data
+    let eventData = cloudEvent.data || cloudEvent;
+
+    // If auth-service pattern detected (has nested data object with actual payload)
+    if (eventData.data && typeof eventData.data === 'object' && (eventData.data.email || eventData.data.userId)) {
+      eventData = eventData.data;
+    }
 
     const contextLogger = logger.withTraceContext(traceId, spanId);
+
+    // Debug: Log raw event structure for troubleshooting
+    contextLogger.debug('Raw CloudEvent structure', {
+      operation: 'debug_event_structure',
+      hasData: !!cloudEvent.data,
+      dataKeys: cloudEvent.data ? Object.keys(cloudEvent.data) : [],
+      hasNestedData: !!cloudEvent.data?.data,
+      extractedEmail: eventData.email,
+      extractedUserId: eventData.userId,
+    });
 
     contextLogger.info(`Received notification event: ${eventType}`, {
       operation: 'process_notification_event',
@@ -190,7 +209,7 @@ class NotificationService {
           renderedNotification.subject || 'Notification',
           renderedNotification.message,
           eventData.eventType,
-          eventData.data
+          eventData.data,
         );
 
         if (emailSent) {
@@ -202,7 +221,7 @@ class NotificationService {
             recipientEmail,
             renderedNotification.subject || 'Notification',
             traceId,
-            spanId
+            spanId,
           );
 
           contextLogger.info('Email notification sent successfully', {
@@ -223,7 +242,7 @@ class NotificationService {
             renderedNotification.subject || 'Notification',
             'Email sending failed',
             traceId,
-            spanId
+            spanId,
           );
 
           contextLogger.error('Failed to send email notification', {
@@ -244,7 +263,7 @@ class NotificationService {
           renderedNotification.subject || 'Notification',
           'No email address or email service disabled',
           traceId,
-          spanId
+          spanId,
         );
 
         contextLogger.warn('Email notification skipped', {

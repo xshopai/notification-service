@@ -84,6 +84,10 @@ interface Config {
         pass: string;
       };
     };
+    acs: {
+      connectionString: string;
+      senderAddress: string;
+    };
     from: {
       name: string;
       address: string;
@@ -181,6 +185,10 @@ const config: Config = {
         user: process.env.SMTP_USER || '',
         pass: process.env.SMTP_PASS || '',
       },
+    },
+    acs: {
+      connectionString: process.env.ACS_CONNECTION_STRING || '',
+      senderAddress: process.env.ACS_SENDER_ADDRESS || '',
     },
     from: {
       name: process.env.EMAIL_FROM_NAME || 'xshopai Notifications',
