@@ -16,5 +16,6 @@ dapr run \
   --log-level info \
   --config ./.dapr/config.yaml \
   --resources-path ./.dapr/components \
-  -- npm run dev
+  -- npx tsx watch src/server.ts
+
 
