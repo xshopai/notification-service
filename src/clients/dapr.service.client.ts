@@ -32,7 +32,16 @@ class DaprServiceClient {
       logger.debug('Publishing event via Dapr', { pubsubName, topic });
 
       const client = this.getClient();
-      await client.pubsub.publish(pubsubName, topic, data);
+
+      // CRITICAL: Tell Dapr the payload is already CloudEvents formatted
+      // This prevents double-wrapping and ensures subscribers receive the data correctly
+      const publishOptions = {
+        metadata: {
+          rawPayload: 'true',
+        },
+      };
+
+      await client.pubsub.publish(pubsubName, topic, data, publishOptions);
 
       logger.info('Event published successfully', { pubsubName, topic });
     } catch (error) {
@@ -49,7 +58,7 @@ class DaprServiceClient {
     methodName: string,
     httpMethod: string = 'GET',
     data: any = null,
-    metadata: Record<string, string> = {}
+    metadata: Record<string, string> = {},
   ): Promise<any> {
     try {
       logger.debug('Invoking service via Dapr', { appId, methodName, httpMethod, ...metadata });

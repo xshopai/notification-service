@@ -16,8 +16,17 @@ const handleEvent = (eventType: string) => {
   return async (req: Request, res: Response): Promise<void> => {
     const startTime = Date.now();
     const cloudEvent = req.body;
-    
+
     try {
+      // DEBUG: Log raw incoming request body for troubleshooting Azure Service Bus event format
+      logger.info(`RAW EVENT RECEIVED: ${eventType}`, {
+        eventType,
+        rawBody: JSON.stringify(cloudEvent).substring(0, 1000),
+        hasData: !!cloudEvent.data,
+        dataType: typeof cloudEvent.data,
+        topLevelKeys: Object.keys(cloudEvent || {}),
+      });
+
       logger.info(`Processing event: ${eventType}`, {
         eventType,
         cloudEventId: cloudEvent.id,
@@ -40,10 +49,10 @@ const handleEvent = (eventType: string) => {
         error: error instanceof Error ? error : new Error(String(error)),
         duration: `${duration}ms`,
       });
-      
-      res.status(500).json({ 
+
+      res.status(500).json({
         status: 'ERROR',
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   };

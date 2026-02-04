@@ -136,32 +136,48 @@ class NotificationService {
    */
   async processNotificationEvent(cloudEvent: any, eventType: string): Promise<void> {
     const startTime = Date.now();
-    // Extract W3C Trace Context from CloudEvent
-    const traceparent = cloudEvent.traceparent || cloudEvent.headers?.traceparent;
-    const traceId = traceparent ? traceparent.split('-')[1] : cloudEvent.id || uuidv4();
-    const spanId = traceparent ? traceparent.split('-')[2] : undefined;
+    // Extract W3C Trace Context from CloudEvent (traceparent field or headers)
+    const traceparent = cloudEvent.traceparent || cloudEvent.data?.traceparent || cloudEvent.headers?.traceparent;
+    const traceId = traceparent
+      ? traceparent.includes('-')
+        ? traceparent.split('-')[1]
+        : traceparent
+      : cloudEvent.id || uuidv4();
+    const spanId = traceparent && traceparent.includes('-') ? traceparent.split('-')[2] : undefined;
     const notificationId = uuidv4();
 
-    // Extract event data - handle double nesting from auth-service event format
-    // Auth-service wraps: { eventId, eventType, source, data: { userId, email, ... }, metadata }
-    // Dapr delivers this as cloudEvent.data, so actual payload is in cloudEvent.data.data
+    // CloudEvents 1.0 extraction:
+    // When publisher sends proper CloudEvents (specversion: "1.0"), Dapr passes it through as-is
+    // The actual payload is in cloudEvent.data
+    //
+    // Structure received:
+    // {
+    //   specversion: "1.0",
+    //   type: "com.xshopai.auth.user.registered",
+    //   source: "/auth-service",
+    //   id: "...",
+    //   time: "...",
+    //   traceparent: "...",
+    //   data: { userId, email, firstName, ... }  <-- actual payload
+    // }
     let eventData = cloudEvent.data || cloudEvent;
 
-    // If auth-service pattern detected (has nested data object with actual payload)
-    if (eventData.data && typeof eventData.data === 'object' && (eventData.data.email || eventData.data.userId)) {
+    // Handle legacy double-nested format for backward compatibility
+    // Old format: cloudEvent.data = { eventId, eventType, data: { userId, email } }
+    if (
+      eventData.data &&
+      typeof eventData.data === 'object' &&
+      (eventData.data.email || eventData.data.userId || eventData.data.firstName)
+    ) {
       eventData = eventData.data;
     }
 
     const contextLogger = logger.withTraceContext(traceId, spanId);
 
     // Debug: Log raw event structure for troubleshooting
-    contextLogger.debug('Raw CloudEvent structure', {
-      operation: 'debug_event_structure',
-      hasData: !!cloudEvent.data,
-      dataKeys: cloudEvent.data ? Object.keys(cloudEvent.data) : [],
-      hasNestedData: !!cloudEvent.data?.data,
-      extractedEmail: eventData.email,
-      extractedUserId: eventData.userId,
+    contextLogger.info('DEBUG: Final eventData', {
+      eventDataAfter: JSON.stringify(eventData),
+      hasEmail: !!eventData.email,
     });
 
     contextLogger.info(`Received notification event: ${eventType}`, {

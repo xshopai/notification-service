@@ -53,6 +53,9 @@ export class DaprMessagingProvider implements MessagingProvider {
       });
 
       const client = this.getClient();
+
+      // Let Dapr handle CloudEvents wrapping/unwrapping natively
+      // Do NOT use rawPayload - it causes deserialization issues with Azure Service Bus
       await client.pubsub.publish(this.pubsubName, topic, event);
 
       logger.info('Event published successfully via Dapr', {
