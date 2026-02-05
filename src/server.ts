@@ -8,6 +8,9 @@ import dotenv from 'dotenv';
 // Load environment variables
 dotenv.config();
 
+// Initialize Zipkin tracing FIRST
+import './tracing.js';
+
 async function startServer() {
   try {
     // Import and start the application
