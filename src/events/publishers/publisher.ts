@@ -44,7 +44,7 @@ export class DaprEventPublisher {
         traceparent: spanId ? `00-${traceId}-${spanId}-01` : `00-${traceId}-${'0'.repeat(16)}-01`,
       };
 
-      const provider = getMessagingProvider();
+      const provider = await getMessagingProvider();
       const success = await provider.publishEvent(eventType, eventData, traceId);
 
       if (success) {

@@ -5,28 +5,41 @@
  * NOTE: Environment variables are loaded in server.ts before this module is imported
  */
 
-import { DaprClient } from '@dapr/dapr';
 import logger from '../core/logger.js';
 import config from '../core/config.js';
+
+// Check messaging provider before loading anything
+const messagingProvider = (process.env.MESSAGING_PROVIDER || 'dapr').toLowerCase();
 
 class DaprSecretManager {
   private environment: string;
   private daprHost: string;
   private daprPort: string;
   private secretStoreName: string;
-  private client: DaprClient;
+  private client: any | null;
+  private messagingProvider: string;
 
   constructor() {
     this.environment = config.service.nodeEnv;
     this.daprHost = process.env.DAPR_HOST || '127.0.0.1';
     this.daprPort = process.env.DAPR_HTTP_PORT || '3500';
-
     this.secretStoreName = 'secretstore';
+    this.messagingProvider = messagingProvider;
 
-    this.client = new DaprClient({
-      daprHost: this.daprHost,
-      daprPort: this.daprPort,
-    });
+    // Skip Dapr client if using direct messaging (RabbitMQ/ServiceBus)
+    if (this.messagingProvider !== 'dapr') {
+      logger.info('Secret manager initialized (Dapr skipped)', {
+        event: 'secret_manager_init',
+        daprEnabled: false,
+        messagingProvider: this.messagingProvider,
+        environment: this.environment,
+      });
+      this.client = null;
+      return;
+    }
+
+    // Only import and initialize DaprClient when using Dapr
+    this._initDaprClient();
 
     logger.info('Secret manager initialized', {
       event: 'secret_manager_init',
@@ -36,12 +49,26 @@ class DaprSecretManager {
     });
   }
 
+  private async _initDaprClient() {
+    // Dynamic import only when messaging provider is Dapr
+    const { DaprClient } = await import('@dapr/dapr');
+    this.client = new DaprClient({
+      daprHost: this.daprHost,
+      daprPort: this.daprPort,
+    });
+  }
+
   /**
    * Get a secret value from Dapr secret store
    * @param secretName - Name of the secret to retrieve
    * @returns Secret value
    */
   async getSecret(secretName: string): Promise<string> {
+    // If Dapr client is not initialized (using direct messaging), throw to trigger fallback
+    if (!this.client) {
+      throw new Error(`Dapr client not available (using ${this.messagingProvider})`);
+    }
+
     try {
       const response = await this.client.secret.get(this.secretStoreName, secretName);
 

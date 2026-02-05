@@ -19,10 +19,6 @@
 export type { MessagingProvider, MessagingProviderType, CloudEvent } from './provider.js';
 export { buildCloudEvent } from './provider.js';
 
-// Provider implementations (for direct instantiation if needed)
-export { DaprMessagingProvider } from './daprProvider.js';
-export { RabbitMQMessagingProvider } from './rabbitmqProvider.js';
-export { ServiceBusMessagingProvider } from './servicebusProvider.js';
-
+// Lazy exports - providers loaded on-demand by factory
 // Factory functions (recommended usage)
 export { getMessagingProvider, closeMessagingProvider, resetMessagingProvider } from './factory.js';
