@@ -4,4 +4,4 @@
  */
 
 export { default as daprClient } from './dapr.service.client.js';
-export { secretManager, getEmailConfig, getMessageBrokerConfig } from './dapr.secret.manager.js';
+export { secretManager, getEmailConfig, getMessageBrokerConfig } from './secret.manager.js';
