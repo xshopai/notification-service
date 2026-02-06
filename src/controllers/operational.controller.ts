@@ -35,17 +35,21 @@ async function performReadinessCheck() {
   const checks: Record<string, any> = {};
 
   try {
-    // Check Dapr sidecar health
+    // Check Dapr sidecar health (optional - service works without Dapr)
     try {
-      await daprClient.getMetadata();
-      checks.dapr = { status: 'healthy' };
+      const metadata = await daprClient.getMetadata();
+      if (metadata) {
+        checks.dapr = { status: 'healthy' };
+      } else {
+        checks.dapr = { status: 'unavailable', message: 'Dapr sidecar not running (optional)' };
+      }
     } catch (error: any) {
       logger.warn('Dapr health check failed', { error: error.message });
-      checks.dapr = { status: 'unhealthy', error: error.message };
+      checks.dapr = { status: 'unavailable', message: error.message };
     }
 
-    const allHealthy = Object.values(checks).every((check) => check.status === 'healthy');
-    const status = allHealthy ? 'ready' : 'not ready';
+    // Service is ready even without Dapr (uses messaging provider fallback)
+    const status = 'ready';
 
     return {
       status,
