@@ -46,9 +46,9 @@ metadata:
   name: user-created-subscription
 spec:
   pubsubname: pubsub
-  topic: user.user.created
+  topic: user.created
   routes:
-    default: /events/user.user.created
+    default: /events/user.created
 ---
 apiVersion: dapr.io/v2alpha1
 kind: Subscription
@@ -56,9 +56,9 @@ metadata:
   name: user-updated-subscription
 spec:
   pubsubname: pubsub
-  topic: user.user.updated
+  topic: user.updated
   routes:
-    default: /events/user.user.updated
+    default: /events/user.updated
 ---
 apiVersion: dapr.io/v2alpha1
 kind: Subscription
@@ -66,9 +66,9 @@ metadata:
   name: user-deleted-subscription
 spec:
   pubsubname: pubsub
-  topic: user.user.deleted
+  topic: user.deleted
   routes:
-    default: /events/user.user.deleted
+    default: /events/user.deleted
 ---
 apiVersion: dapr.io/v2alpha1
 kind: Subscription

@@ -65,9 +65,9 @@ export const handleAuthPasswordResetRequested = handleEvent('auth.password.reset
 export const handleAuthPasswordResetCompleted = handleEvent('auth.password.reset.completed');
 
 // User events
-export const handleUserCreated = handleEvent('user.user.created');
-export const handleUserUpdated = handleEvent('user.user.updated');
-export const handleUserDeleted = handleEvent('user.user.deleted');
+export const handleUserCreated = handleEvent('user.created');
+export const handleUserUpdated = handleEvent('user.updated');
+export const handleUserDeleted = handleEvent('user.deleted');
 export const handleUserEmailVerified = handleEvent('user.email.verified');
 export const handleUserPasswordChanged = handleEvent('user.password.changed');
 

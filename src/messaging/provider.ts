@@ -34,6 +34,14 @@ export interface MessagingProvider {
   publishEvent(topic: string, eventData: Record<string, any>, correlationId?: string): Promise<boolean>;
 
   /**
+   * Subscribe to topics and consume messages (for direct broker consumption)
+   * @param topics - Array of topics to subscribe to
+   * @param handler - Async function to handle incoming messages
+   * @returns Promise<void>
+   */
+  subscribe?(topics: string[], handler: (event: CloudEvent) => Promise<void>): Promise<void>;
+
+  /**
    * Close the provider connection gracefully
    */
   close(): Promise<void>;

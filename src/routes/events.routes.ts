@@ -15,9 +15,9 @@ router.post('/events/auth.password.reset.requested', eventsController.handleAuth
 router.post('/events/auth.password.reset.completed', eventsController.handleAuthPasswordResetCompleted);
 
 // User events
-router.post('/events/user.user.created', eventsController.handleUserCreated);
-router.post('/events/user.user.updated', eventsController.handleUserUpdated);
-router.post('/events/user.user.deleted', eventsController.handleUserDeleted);
+router.post('/events/user.created', eventsController.handleUserCreated);
+router.post('/events/user.updated', eventsController.handleUserUpdated);
+router.post('/events/user.deleted', eventsController.handleUserDeleted);
 router.post('/events/user.email.verified', eventsController.handleUserEmailVerified);
 router.post('/events/user.password.changed', eventsController.handleUserPasswordChanged);
 
@@ -32,7 +32,10 @@ router.post('/events/payment.failed', eventsController.handlePaymentFailed);
 
 // Profile events
 router.post('/events/profile.password_changed', eventsController.handleProfilePasswordChanged);
-router.post('/events/profile.notification_preferences_updated', eventsController.handleProfileNotificationPreferencesUpdated);
+router.post(
+  '/events/profile.notification_preferences_updated',
+  eventsController.handleProfileNotificationPreferencesUpdated,
+);
 router.post('/events/profile.bank_details_updated', eventsController.handleProfileBankDetailsUpdated);
 
 export default router;

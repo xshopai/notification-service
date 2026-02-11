@@ -119,6 +119,114 @@ export class RabbitMQMessagingProvider implements MessagingProvider {
     }
   }
 
+  /**
+   * Subscribe to topics and consume messages directly from RabbitMQ
+   * Creates a queue for this service and binds it to specified topics
+   */
+  async subscribe(
+    topics: string[],
+    handler: (event: import('./provider.js').CloudEvent) => Promise<void>,
+  ): Promise<void> {
+    try {
+      const channel = (await this.getChannel()) as any; // Cast to any for missing type definitions
+      const queueName = `${this.serviceName}-queue`;
+
+      logger.info('Setting up RabbitMQ consumer', {
+        operation: 'subscribe',
+        provider: 'rabbitmq',
+        queueName,
+        topics,
+        exchange: this.exchange,
+      });
+
+      // Assert queue (durable, survives broker restart)
+      await channel.assertQueue(queueName, {
+        durable: true,
+        autoDelete: false,
+      });
+
+      // Bind queue to topics
+      for (const topic of topics) {
+        await channel.bindQueue(queueName, this.exchange, topic);
+        logger.info(`Bound queue to topic: ${topic}`, {
+          operation: 'subscribe',
+          provider: 'rabbitmq',
+          queue: queueName,
+          topic,
+        });
+      }
+
+      // Set prefetch to process one message at a time
+      await channel.prefetch(1);
+
+      // Start consuming
+      await channel.consume(
+        queueName,
+        async (msg: any) => {
+          if (!msg) return;
+
+          const correlationId = msg.properties.correlationId || 'unknown';
+
+          try {
+            const eventData = JSON.parse(msg.content.toString());
+
+            logger.debug('Received RabbitMQ message', {
+              operation: 'consume',
+              provider: 'rabbitmq',
+              topic: msg.fields.routingKey,
+              correlationId,
+            });
+
+            // Add type field from routing key (required by event router)
+            // Auth-service publishes with topic as routing key but doesn't include type in body
+            eventData.type = msg.fields.routingKey;
+
+            // Call the handler
+            await handler(eventData);
+
+            // Acknowledge message
+            channel.ack(msg);
+
+            logger.debug('Message processed successfully', {
+              operation: 'consume',
+              provider: 'rabbitmq',
+              topic: msg.fields.routingKey,
+              correlationId,
+            });
+          } catch (error) {
+            logger.error('Error processing RabbitMQ message', {
+              operation: 'consume',
+              provider: 'rabbitmq',
+              topic: msg.fields.routingKey,
+              correlationId,
+              error: error instanceof Error ? error : new Error(String(error)),
+            });
+
+            // Reject and requeue message (will retry)
+            channel.nack(msg, false, true);
+          }
+        },
+        {
+          noAck: false, // Manual acknowledgment
+        },
+      );
+
+      logger.info('RabbitMQ consumer started successfully', {
+        operation: 'subscribe',
+        provider: 'rabbitmq',
+        queueName,
+        topicCount: topics.length,
+      });
+    } catch (error) {
+      logger.error('Failed to start RabbitMQ consumer', {
+        operation: 'subscribe',
+        provider: 'rabbitmq',
+        error: error instanceof Error ? error : new Error(String(error)),
+      });
+      throw error;
+    }
+  }
+
   async close(): Promise<void> {
     try {
       if (this.channel) {

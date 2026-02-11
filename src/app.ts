@@ -11,9 +11,12 @@ import homeRoutes from './routes/home.routes.js';
 import operationalRoutes from './routes/operational.routes.js';
 import eventsRoutes from './routes/events.routes.js';
 import daprRoutes from './routes/dapr.routes.js';
+import { getMessagingProvider } from './messaging/index.js';
+import { getSubscriptionTopics, routeEventToHandler } from './consumers/rabbitmq.consumer.js';
 
 const app = express();
 let isShuttingDown = false;
+let messagingProvider: any = null;
 
 // Middleware
 app.use(express.json());
@@ -51,6 +54,7 @@ export const startConsumer = async (): Promise<void> => {
       service: config.service.name,
       version: config.service.version,
       environment: config.service.nodeEnv,
+      messagingProvider: config.messageBroker.type,
     });
 
     // Start HTTP server (required for Dapr subscriptions and health checks)
@@ -61,15 +65,40 @@ export const startConsumer = async (): Promise<void> => {
       logger.info(`Notification service running on ${HOST}:${PORT} in ${config.service.nodeEnv} mode`, {
         service: config.service.name,
         version: config.service.version,
-        dapr: {
-          enabled: true,
-          appId: config.dapr.appId,
-          httpPort: config.dapr.httpPort,
-        },
+        messagingProvider: config.messageBroker.type,
       });
     });
 
-    logger.info('Consumer ready - processing events via Dapr declarative subscriptions');
+    // Start message consumer based on provider
+    const provider = config.messageBroker.type.toLowerCase();
+
+    if (provider === 'rabbitmq') {
+      // Direct RabbitMQ consumer (for local deployment without Dapr)
+      logger.info('Starting direct RabbitMQ consumer');
+
+      messagingProvider = await getMessagingProvider();
+
+      if (messagingProvider.subscribe) {
+        const topics = getSubscriptionTopics();
+
+        logger.info('Subscribing to RabbitMQ topics', {
+          topicCount: topics.length,
+          topics,
+        });
+
+        await messagingProvider.subscribe(topics, routeEventToHandler);
+
+        logger.info('✅ RabbitMQ consumer started - processing events directly from RabbitMQ');
+      } else {
+        logger.warn('⚠️ RabbitMQ provider does not support direct consumption - falling back to Dapr mode');
+        logger.info('Consumer ready - processing events via Dapr declarative subscriptions');
+      }
+    } else {
+      // Dapr or other providers - use HTTP endpoints
+      logger.info('Consumer ready - processing events via Dapr declarative subscriptions', {
+        provider,
+      });
+    }
   } catch (error) {
     logger.error('Failed to start notification consumer', { error });
     process.exit(1);
@@ -89,7 +118,12 @@ const gracefulShutdown = async (signal: string): Promise<void> => {
   logger.info('Starting graceful shutdown', { signal });
 
   try {
-    logger.info('Dapr server shutdown handled by Dapr runtime');
+    // Close messaging provider connection
+    if (messagingProvider) {
+      logger.info('Closing messaging provider connection');
+      await messagingProvider.close();
+    }
+
     logger.info('Graceful shutdown completed');
     process.exit(0);
   } catch (error) {
