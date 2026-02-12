@@ -60,9 +60,10 @@ export const startConsumer = async (): Promise<void> => {
     // Start HTTP server (required for Dapr subscriptions and health checks)
     const PORT = config.service.port;
     const HOST = config.service.host;
+    const displayHost = HOST === '0.0.0.0' ? 'localhost' : HOST;
 
     app.listen(PORT, HOST, () => {
-      logger.info(`Notification service running on ${HOST}:${PORT} in ${config.service.nodeEnv} mode`, {
+      logger.info(`Notification service running on ${displayHost}:${PORT} in ${config.service.nodeEnv} mode`, {
         service: config.service.name,
         version: config.service.version,
         messagingProvider: config.messageBroker.type,

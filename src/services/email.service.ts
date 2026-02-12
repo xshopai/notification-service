@@ -31,9 +31,11 @@ class SMTPEmailProvider implements EmailProvider {
     try {
       // For Mailpit and other local SMTP servers, credentials might be optional
       const hasCredentials = config.email.smtp.auth.user && config.email.smtp.auth.pass;
+      const isLocalhost = config.email.smtp.host === 'localhost' || config.email.smtp.host === '127.0.0.1';
 
-      if (!hasCredentials) {
-        logger.warn('⚠️ SMTP credentials not configured. Using anonymous SMTP (suitable for Mailpit/testing).');
+      // Only warn about missing credentials for non-local SMTP hosts
+      if (!hasCredentials && !isLocalhost) {
+        logger.warn('⚠️ SMTP credentials not configured for remote host');
       }
 
       const transportConfig: any = {
