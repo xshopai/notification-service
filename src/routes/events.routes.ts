@@ -25,6 +25,7 @@ router.post('/events/user.password.changed', eventsController.handleUserPassword
 router.post('/events/order.placed', eventsController.handleOrderPlaced);
 router.post('/events/order.cancelled', eventsController.handleOrderCancelled);
 router.post('/events/order.delivered', eventsController.handleOrderDelivered);
+router.post('/events/order.shipped', eventsController.handleOrderShipped);
 
 // Payment events
 router.post('/events/payment.received', eventsController.handlePaymentReceived);

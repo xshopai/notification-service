@@ -75,6 +75,7 @@ export const handleUserPasswordChanged = handleEvent('user.password.changed');
 export const handleOrderPlaced = handleEvent('order.placed');
 export const handleOrderCancelled = handleEvent('order.cancelled');
 export const handleOrderDelivered = handleEvent('order.delivered');
+export const handleOrderShipped = handleEvent('order.shipped');
 
 // Payment events
 export const handlePaymentReceived = handleEvent('payment.received');

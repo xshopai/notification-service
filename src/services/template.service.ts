@@ -92,6 +92,15 @@ const DEFAULT_TEMPLATES: NotificationTemplate[] = [
       'Hello,\n\nGreat news! Your order #{{orderNumber}} has been delivered.\n\nOrder ID: {{orderId}}\n\nWe hope you enjoy your purchase!',
     is_active: true,
   },
+  {
+    event_type: 'order.shipped',
+    channel: 'email',
+    template_name: 'Order Shipped',
+    subject: 'Your order is on its way! - #{{orderNumber}}',
+    message_template:
+      'Hello,\n\nGreat news! Your order #{{orderNumber}} has been shipped.\n\nOrder ID: {{orderId}}\nTracking Number: {{trackingNumber}}\n\nYou can track your order status in your account.\n\nThank you for shopping with us!',
+    is_active: true,
+  },
   // Payment events
   {
     event_type: 'payment.received',
