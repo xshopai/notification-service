@@ -80,7 +80,7 @@ const DEFAULT_TEMPLATES: NotificationTemplate[] = [
     template_name: 'Order Cancelled',
     subject: 'Order Cancelled - #{{orderNumber}}',
     message_template:
-      'Hello,\n\nYour order #{{orderNumber}} has been cancelled.\n\nOrder ID: {{orderId}}\n\nIf you did not request this cancellation, please contact support.',
+      'Hello,\n\nYour order #{{orderNumber}} has been cancelled.\n\nOrder ID: {{orderId}}\nReason: {{cancellationReason}}\n\nIf you did not request this cancellation, please contact support.',
     is_active: true,
   },
   {
