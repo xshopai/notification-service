@@ -71,7 +71,7 @@ const DEFAULT_TEMPLATES: NotificationTemplate[] = [
     template_name: 'Order Confirmation',
     subject: 'Order Confirmed - #{{orderNumber}}',
     message_template:
-      'Hello,\n\nYour order #{{orderNumber}} has been placed successfully.\n\nOrder ID: {{orderId}}\nAmount: ${{amount}}\n\nThank you for your purchase!',
+      'Hello,\n\nYour order #{{orderNumber}} has been placed successfully.\n\nOrder ID: {{orderId}}\nAmount: ${{totalAmount}}\n\nThank you for your purchase!',
     is_active: true,
   },
   {

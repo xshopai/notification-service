@@ -217,7 +217,7 @@ class NotificationService {
 
       // Send actual email notification
       let emailSent = false;
-      const recipientEmail = eventData.userEmail || eventData.email;
+      const recipientEmail = eventData.userEmail || eventData.email || eventData.customerEmail;
 
       if (recipientEmail && this.emailService.isEnabled()) {
         emailSent = await this.emailService.sendNotificationEmail(
