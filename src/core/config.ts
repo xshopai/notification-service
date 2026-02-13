@@ -96,7 +96,10 @@ interface Config {
   };
 }
 
-const brokerType = (process.env.MESSAGE_BROKER_TYPE || 'rabbitmq') as 'rabbitmq' | 'kafka' | 'azure-servicebus';
+const brokerType = (process.env.MESSAGING_PROVIDER || 'rabbitmq') as
+  | 'rabbitmq'
+  | 'kafka'
+  | 'azure-servicebus';
 
 const config: Config = {
   service: {

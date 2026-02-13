@@ -55,6 +55,7 @@ const TOPIC_HANDLERS: Record<string, (event: CloudEvent) => Promise<void>> = {
     eventsController.handleOrderCancelled({ body: event } as any, createMockResponse()),
   'order.delivered': async (event) =>
     eventsController.handleOrderDelivered({ body: event } as any, createMockResponse()),
+  'order.shipped': async (event) => eventsController.handleOrderShipped({ body: event } as any, createMockResponse()),
 
   // Payment events
   'payment.received': async (event) =>
