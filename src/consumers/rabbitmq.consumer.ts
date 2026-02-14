@@ -25,9 +25,15 @@ function createMockResponse() {
 /**
  * Topic to handler mapping
  * Maps RabbitMQ topics to their respective event handlers
+ *
+ * Topic names MUST match what publishing services actually emit:
+ * - auth-service: auth.user.registered, auth.email.verification.requested, etc.
+ * - user-service: user.created, user.updated, user.deleted, etc.
+ * - order-service: order.placed, order.cancelled, etc.
+ * - payment-service: payment.received, payment.failed
  */
 const TOPIC_HANDLERS: Record<string, (event: CloudEvent) => Promise<void>> = {
-  // Auth events
+  // Auth events (from auth-service)
   'auth.user.registered': async (event) =>
     eventsController.handleAuthUserRegistered({ body: event } as any, createMockResponse()),
   'auth.email.verification.requested': async (event) =>
@@ -37,19 +43,16 @@ const TOPIC_HANDLERS: Record<string, (event: CloudEvent) => Promise<void>> = {
   'auth.password.reset.completed': async (event) =>
     eventsController.handleAuthPasswordResetCompleted({ body: event } as any, createMockResponse()),
 
-  // User events
-  'user.user.created': async (event) =>
-    eventsController.handleUserCreated({ body: event } as any, createMockResponse()),
-  'user.user.updated': async (event) =>
-    eventsController.handleUserUpdated({ body: event } as any, createMockResponse()),
-  'user.user.deleted': async (event) =>
-    eventsController.handleUserDeleted({ body: event } as any, createMockResponse()),
+  // User events (from user-service) - topic format: user.{action}
+  'user.created': async (event) => eventsController.handleUserCreated({ body: event } as any, createMockResponse()),
+  'user.updated': async (event) => eventsController.handleUserUpdated({ body: event } as any, createMockResponse()),
+  'user.deleted': async (event) => eventsController.handleUserDeleted({ body: event } as any, createMockResponse()),
   'user.email.verified': async (event) =>
     eventsController.handleUserEmailVerified({ body: event } as any, createMockResponse()),
   'user.password.changed': async (event) =>
     eventsController.handleUserPasswordChanged({ body: event } as any, createMockResponse()),
 
-  // Order events
+  // Order events (from order-service)
   'order.placed': async (event) => eventsController.handleOrderPlaced({ body: event } as any, createMockResponse()),
   'order.cancelled': async (event) =>
     eventsController.handleOrderCancelled({ body: event } as any, createMockResponse()),
@@ -57,12 +60,12 @@ const TOPIC_HANDLERS: Record<string, (event: CloudEvent) => Promise<void>> = {
     eventsController.handleOrderDelivered({ body: event } as any, createMockResponse()),
   'order.shipped': async (event) => eventsController.handleOrderShipped({ body: event } as any, createMockResponse()),
 
-  // Payment events
+  // Payment events (from payment-service)
   'payment.received': async (event) =>
     eventsController.handlePaymentReceived({ body: event } as any, createMockResponse()),
   'payment.failed': async (event) => eventsController.handlePaymentFailed({ body: event } as any, createMockResponse()),
 
-  // Profile events
+  // Profile events (from user-service profile operations)
   'profile.password_changed': async (event) =>
     eventsController.handleProfilePasswordChanged({ body: event } as any, createMockResponse()),
   'profile.notification_preferences_updated': async (event) =>
