@@ -24,7 +24,7 @@ export enum EventTypes {
   AUTH_PASSWORD_RESET_COMPLETED = 'auth.password.reset.completed',
 
   // Order events
-  ORDER_PLACED = 'order.placed',
+  ORDER_CREATED = 'order.created',
   ORDER_CANCELLED = 'order.cancelled',
   ORDER_DELIVERED = 'order.delivered',
   PAYMENT_RECEIVED = 'payment.received',
@@ -74,7 +74,7 @@ export interface AuthEvent extends BaseEvent {
 }
 
 export interface OrderEvent extends BaseEvent {
-  eventType: EventTypes.ORDER_PLACED | EventTypes.ORDER_CANCELLED | EventTypes.ORDER_DELIVERED;
+  eventType: EventTypes.ORDER_CREATED | EventTypes.ORDER_CANCELLED | EventTypes.ORDER_DELIVERED;
   data: {
     orderId: string;
     orderNumber: string;

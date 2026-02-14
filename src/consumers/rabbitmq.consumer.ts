@@ -29,7 +29,7 @@ function createMockResponse() {
  * Topic names MUST match what publishing services actually emit:
  * - auth-service: auth.user.registered, auth.email.verification.requested, etc.
  * - user-service: user.created, user.updated, user.deleted, etc.
- * - order-service: order.placed, order.cancelled, etc.
+ * - order-service: order.created, order.cancelled, etc.
  * - payment-service: payment.received, payment.failed
  */
 const TOPIC_HANDLERS: Record<string, (event: CloudEvent) => Promise<void>> = {
@@ -53,7 +53,7 @@ const TOPIC_HANDLERS: Record<string, (event: CloudEvent) => Promise<void>> = {
     eventsController.handleUserPasswordChanged({ body: event } as any, createMockResponse()),
 
   // Order events (from order-service)
-  'order.placed': async (event) => eventsController.handleOrderPlaced({ body: event } as any, createMockResponse()),
+  'order.created': async (event) => eventsController.handleOrderCreated({ body: event } as any, createMockResponse()),
   'order.cancelled': async (event) =>
     eventsController.handleOrderCancelled({ body: event } as any, createMockResponse()),
   'order.delivered': async (event) =>

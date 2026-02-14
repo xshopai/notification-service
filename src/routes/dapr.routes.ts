@@ -22,7 +22,11 @@ const router = express.Router();
 const SUBSCRIPTIONS = [
   // Auth events
   { pubsubname: 'pubsub', topic: 'auth.user.registered', route: '/events/auth.user.registered' },
-  { pubsubname: 'pubsub', topic: 'auth.email.verification.requested', route: '/events/auth.email.verification.requested' },
+  {
+    pubsubname: 'pubsub',
+    topic: 'auth.email.verification.requested',
+    route: '/events/auth.email.verification.requested',
+  },
   { pubsubname: 'pubsub', topic: 'auth.password.reset.requested', route: '/events/auth.password.reset.requested' },
   { pubsubname: 'pubsub', topic: 'auth.password.reset.completed', route: '/events/auth.password.reset.completed' },
 
@@ -34,7 +38,7 @@ const SUBSCRIPTIONS = [
   { pubsubname: 'pubsub', topic: 'user.password.changed', route: '/events/user.password.changed' },
 
   // Order events
-  { pubsubname: 'pubsub', topic: 'order.placed', route: '/events/order.placed' },
+  { pubsubname: 'pubsub', topic: 'order.created', route: '/events/order.created' },
   { pubsubname: 'pubsub', topic: 'order.cancelled', route: '/events/order.cancelled' },
   { pubsubname: 'pubsub', topic: 'order.delivered', route: '/events/order.delivered' },
 
@@ -44,7 +48,11 @@ const SUBSCRIPTIONS = [
 
   // Profile events
   { pubsubname: 'pubsub', topic: 'profile.password_changed', route: '/events/profile.password_changed' },
-  { pubsubname: 'pubsub', topic: 'profile.notification_preferences_updated', route: '/events/profile.notification_preferences_updated' },
+  {
+    pubsubname: 'pubsub',
+    topic: 'profile.notification_preferences_updated',
+    route: '/events/profile.notification_preferences_updated',
+  },
   { pubsubname: 'pubsub', topic: 'profile.bank_details_updated', route: '/events/profile.bank_details_updated' },
 ];
 

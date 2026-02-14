@@ -22,7 +22,7 @@ router.post('/events/user.email.verified', eventsController.handleUserEmailVerif
 router.post('/events/user.password.changed', eventsController.handleUserPasswordChanged);
 
 // Order events
-router.post('/events/order.placed', eventsController.handleOrderPlaced);
+router.post('/events/order.created', eventsController.handleOrderCreated);
 router.post('/events/order.cancelled', eventsController.handleOrderCancelled);
 router.post('/events/order.delivered', eventsController.handleOrderDelivered);
 router.post('/events/order.shipped', eventsController.handleOrderShipped);

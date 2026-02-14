@@ -183,7 +183,7 @@ The service listens for these event types:
 
 ### Order Events
 
-- `order.placed`
+- `order.created`
 - `order.cancelled`
 - `order.delivered`
 

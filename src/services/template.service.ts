@@ -66,7 +66,7 @@ const DEFAULT_TEMPLATES: NotificationTemplate[] = [
   },
   // Order events
   {
-    event_type: 'order.placed',
+    event_type: 'order.created',
     channel: 'email',
     template_name: 'Order Confirmation',
     subject: 'Order Confirmed - #{{orderNumber}}',

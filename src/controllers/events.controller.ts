@@ -72,7 +72,7 @@ export const handleUserEmailVerified = handleEvent('user.email.verified');
 export const handleUserPasswordChanged = handleEvent('user.password.changed');
 
 // Order events
-export const handleOrderPlaced = handleEvent('order.placed');
+export const handleOrderCreated = handleEvent('order.created');
 export const handleOrderCancelled = handleEvent('order.cancelled');
 export const handleOrderDelivered = handleEvent('order.delivered');
 export const handleOrderShipped = handleEvent('order.shipped');

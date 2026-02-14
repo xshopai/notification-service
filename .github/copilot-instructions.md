@@ -176,7 +176,7 @@ contextLogger.info('Processing notification', { eventType });
 | `auth.user.registered`              | `/events/auth.user.registered`              | Welcome email        |
 | `auth.email.verification.requested` | `/events/auth.email.verification.requested` | Verification email   |
 | `auth.password.reset.requested`     | `/events/auth.password.reset.requested`     | Password reset email |
-| `order.placed`                      | `/events/order.placed`                      | Order confirmation   |
+| `order.created`                     | `/events/order.created`                     | Order confirmation   |
 | `order.cancelled`                   | `/events/order.cancelled`                   | Cancellation notice  |
 | `payment.received`                  | `/events/payment.received`                  | Payment confirmation |
 
