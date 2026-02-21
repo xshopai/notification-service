@@ -5,10 +5,10 @@
   "type": "module",
   "main": "dist/src/server.js",
   "scripts": {
-    "start": "node dist/src/server.js",
+    "start": "node dist/server.js",
     "dev": "npx tsx watch src/server.ts",
     "debug": "npx tsx --inspect=9229 src/server.ts",
-    "start:dapr": "dapr run --app-id notification-service --app-port 8011 --dapr-http-port 3500 --dapr-grpc-port 50001 --log-level warn --resources-path ./.dapr/components -- node dist/src/server.js",
+    "start:dapr": "dapr run --app-id notification-service --app-port 8011 --dapr-http-port 3500 --dapr-grpc-port 50001 --log-level warn --resources-path ./.dapr/components -- node dist/server.js",
     "dev:dapr": "dapr run --app-id notification-service --app-port 8011 --dapr-http-port 3500 --dapr-grpc-port 50001 --log-level warn --resources-path ./.dapr/components -- npx tsx watch src/server.ts",
     "debug:dapr": "dapr run --app-id notification-service --app-port 8011 --dapr-http-port 3500 --dapr-grpc-port 50001 --log-level warn --resources-path ./.dapr/components -- npx tsx --inspect=9229 src/server.ts",
     "build": "tsc",
