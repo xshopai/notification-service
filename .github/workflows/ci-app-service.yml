@@ -241,4 +241,3 @@ jobs:
             echo "| Runtime | Node.js ${{ env.NODE_VERSION }} |"
             echo "| Commit | \`${{ github.sha }}\` |"
           } >> "$GITHUB_STEP_SUMMARY"
-
