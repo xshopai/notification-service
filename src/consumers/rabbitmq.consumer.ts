@@ -54,11 +54,17 @@ const TOPIC_HANDLERS: Record<string, (event: CloudEvent) => Promise<void>> = {
 
   // Order events (from order-service)
   'order.created': async (event) => eventsController.handleOrderCreated({ body: event } as any, createMockResponse()),
-  'order.cancelled': async (event) =>
-    eventsController.handleOrderCancelled({ body: event } as any, createMockResponse()),
+  'order.confirmed': async (event) =>
+    eventsController.handleOrderConfirmed({ body: event } as any, createMockResponse()),
+  'order.shipped': async (event) => eventsController.handleOrderShipped({ body: event } as any, createMockResponse()),
   'order.delivered': async (event) =>
     eventsController.handleOrderDelivered({ body: event } as any, createMockResponse()),
-  'order.shipped': async (event) => eventsController.handleOrderShipped({ body: event } as any, createMockResponse()),
+  'order.completed': async (event) =>
+    eventsController.handleOrderCompleted({ body: event } as any, createMockResponse()),
+  'order.cancelled': async (event) =>
+    eventsController.handleOrderCancelled({ body: event } as any, createMockResponse()),
+  'order.refunded': async (event) =>
+    eventsController.handleOrderRefunded({ body: event } as any, createMockResponse()),
 
   // Payment events (from payment-service)
   'payment.received': async (event) =>
