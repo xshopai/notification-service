@@ -18,7 +18,7 @@ interface Config {
     host: string;
     nodeEnv: string;
   };
-  serviceInvocationMode: 'http' | 'dapr';
+  platformMode: 'direct' | 'dapr';
   cors: {
     origins: string[];
   };
@@ -108,7 +108,7 @@ const config: Config = {
     nodeEnv: process.env.NODE_ENV || 'development',
   },
 
-  serviceInvocationMode: (process.env.SERVICE_INVOCATION_MODE || 'http') as 'http' | 'dapr',
+  platformMode: (process.env.PLATFORM_MODE || 'direct') as 'direct' | 'dapr',
 
   cors: {
     origins: process.env.CORS_ORIGINS
