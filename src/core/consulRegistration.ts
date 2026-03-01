@@ -43,7 +43,7 @@ export async function register(name: string, port: number, host = 'localhost'): 
     Address: address,
     Port: port,
     Check: {
-      HTTP: `http://${address}:${port}/health`,
+      HTTP: `http://${address}:${port}/health/live`,
       Interval: '10s',
       Timeout: '5s',
       DeregisterCriticalServiceAfter: '30s',
