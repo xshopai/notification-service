@@ -9,6 +9,7 @@
  */
 
 const CONSUL_URL = process.env.CONSUL_URL || '';
+const CONSUL_HEALTH_HOST = process.env.CONSUL_HEALTH_HOST || 'host.docker.internal';
 
 interface ConsulServiceRegistration {
   ID: string;
@@ -43,7 +44,7 @@ export async function register(name: string, port: number, host = 'localhost'): 
     Address: address,
     Port: port,
     Check: {
-      HTTP: `http://${address}:${port}/health/live`,
+      HTTP: `http://${CONSUL_HEALTH_HOST}:${port}/health/live`,
       Interval: '10s',
       Timeout: '5s',
       DeregisterCriticalServiceAfter: '30s',
