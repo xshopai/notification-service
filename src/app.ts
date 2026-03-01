@@ -6,6 +6,7 @@
 import express from 'express';
 import logger from './core/logger.js';
 import config from './core/config.js';
+import { register as consulRegister, deregister as consulDeregister } from './core/consulRegistration.js';
 import { traceContextMiddleware } from './middlewares/traceContext.middleware.js';
 import homeRoutes from './routes/home.routes.js';
 import operationalRoutes from './routes/operational.routes.js';
@@ -62,7 +63,8 @@ export const startConsumer = async (): Promise<void> => {
     const HOST = config.service.host;
     const displayHost = HOST === '0.0.0.0' ? 'localhost' : HOST;
 
-    app.listen(PORT, HOST, () => {
+    app.listen(PORT, HOST, async () => {
+      await consulRegister('notification-service', PORT, HOST);
       logger.info(`Notification service running on ${displayHost}:${PORT} in ${config.service.nodeEnv} mode`, {
         service: config.service.name,
         version: config.service.version,
@@ -119,6 +121,9 @@ const gracefulShutdown = async (signal: string): Promise<void> => {
   logger.info('Starting graceful shutdown', { signal });
 
   try {
+    // Deregister from Consul
+    await consulDeregister();
+
     // Close messaging provider connection
     if (messagingProvider) {
       logger.info('Closing messaging provider connection');
