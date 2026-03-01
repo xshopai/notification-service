@@ -6,6 +6,7 @@
  */
 import config from '../core/config.js';
 import logger from '../core/logger.js';
+import { resolveAsync } from '../core/serviceResolver.js';
 
 // Determine service invocation mode based on MESSAGING_PROVIDER
 const MESSAGING_PROVIDER = process.env.MESSAGING_PROVIDER || 'rabbitmq';
@@ -20,13 +21,6 @@ const DAPR_APP_IDS: Record<string, string> = {
   'user-service': process.env.DAPR_USER_SERVICE_APP_ID || 'user-service',
   'order-service': process.env.DAPR_ORDER_SERVICE_APP_ID || 'order-service',
   'product-service': process.env.DAPR_PRODUCT_SERVICE_APP_ID || 'product-service',
-};
-
-// Direct HTTP URLs for service discovery (used when MESSAGING_PROVIDER != dapr)
-const SERVICE_URLS: Record<string, string> = {
-  'user-service': process.env.USER_SERVICE_URL || 'http://xshopai-user-service:8002',
-  'order-service': process.env.ORDER_SERVICE_URL || 'http://xshopai-order-service:8006',
-  'product-service': process.env.PRODUCT_SERVICE_URL || 'http://xshopai-product-service:8001',
 };
 
 class DaprServiceClient {
@@ -82,8 +76,8 @@ class DaprServiceClient {
         url = `http://${DAPR_HOST}:${DAPR_HTTP_PORT}/v1.0/invoke/${appId}/method/${cleanMethodName}`;
         logger.debug('Invoking service via Dapr', { serviceName, appId, url, httpMethod });
       } else {
-        // Direct HTTP call
-        const baseUrl = SERVICE_URLS[serviceName] || `http://xshopai-${serviceName}:8000`;
+        // Direct HTTP call — resolved via serviceResolver (Consul → PORT_REGISTRY)
+        const baseUrl = await resolveAsync(serviceName);
         url = `${baseUrl}/${cleanMethodName}`;
         logger.debug('Invoking service via HTTP', { serviceName, url, httpMethod });
       }
