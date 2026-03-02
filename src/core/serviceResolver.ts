@@ -103,9 +103,7 @@ export async function resolveAsync(appId: string): Promise<string> {
     return url;
   }
 
-  throw new Error(
-    `[ServiceResolver] Unknown service: '${appId}'. Add it to PORT_REGISTRY or set SERVICE_BASE_URL.`,
-  );
+  throw new Error(`[ServiceResolver] Unknown service: '${appId}'. Add it to PORT_REGISTRY or set SERVICE_BASE_URL.`);
 }
 
 /** Resolve a service URL (sync — convention-based only, reads Consul cache). */
@@ -118,9 +116,7 @@ export function resolve(appId: string): string {
   const port = PORT_REGISTRY[appId];
   if (port) return `http://localhost:${port}`;
 
-  throw new Error(
-    `[ServiceResolver] Unknown service: '${appId}'. Add it to PORT_REGISTRY or set SERVICE_BASE_URL.`,
-  );
+  throw new Error(`[ServiceResolver] Unknown service: '${appId}'. Add it to PORT_REGISTRY or set SERVICE_BASE_URL.`);
 }
 
 export default { resolve, resolveAsync, PORT_REGISTRY };
