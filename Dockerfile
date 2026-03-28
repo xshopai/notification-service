@@ -5,7 +5,7 @@
 # -----------------------------------------------------------------------------
 # Base stage - Common setup for all stages
 # -----------------------------------------------------------------------------
-FROM node:24-alpine AS base
+FROM node:25-alpine AS base
 WORKDIR /app
 
 # Install dumb-init for proper signal handling
